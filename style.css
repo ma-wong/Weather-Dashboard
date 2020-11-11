@@ -12,4 +12,15 @@
     margin-right: 30px;
     margin-top: 30px;
     margin-bottom: 0px;
+    width: 100%;
+}
+
+.bg-primary {
+    height: 13rem;
+    width: 9.5rem;
+    margin: 1rem;
+}
+
+#forecast-text {
+    font-size: 20pt;
 }
