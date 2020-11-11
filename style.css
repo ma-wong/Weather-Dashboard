@@ -16,11 +16,25 @@
 }
 
 .bg-primary {
-    height: 13rem;
+    height: 15rem;
     width: 9.5rem;
     margin: 1rem;
 }
 
 #forecast-text {
     font-size: 20pt;
+    margin-bottom: 0px;
+}
+
+.fc-date {
+    font-size: 15pt;
+}
+
+.navbar-brand {
+    font-size: 30pt;
+}
+
+#main-icon {
+    margin-left: 15px;
+    margin-right: 10px;
 }
