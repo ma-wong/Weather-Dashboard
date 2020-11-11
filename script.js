@@ -5,7 +5,6 @@ $('#search-btn').on('click', function() {
     var cityName = $('#search-input').val();
     var queryURL = 'https://api.openweathermap.org/data/2.5/weather?q=' + cityName + '&appid=b358465e5aa355de6ef4b2a790684722';
     var forecastURL = 'https://api.openweathermap.org/data/2.5/forecast?q=' + cityName + '&appid=b358465e5aa355de6ef4b2a790684722';
-    // var uvIndexURL = 'https://api.openweathermap.org/data/2.5/uvi?lat={' + lat + '}&lon={' + lon +'}&appid=b358465e5aa355de6ef4b2a790684722';
 
     $.ajax({
         url: queryURL,
@@ -53,14 +52,6 @@ $('#search-btn').on('click', function() {
 
         });
     });
-
-    // $.ajax({
-    //     url: uvIndexURL,
-    //     method: 'GET'
-    // }).then(function(response) {
-    //     // $('#uv-index').text('UV Index: ' + response);
-    //     console.log(response);
-    // })
 
     $.ajax({
         url: forecastURL,
