@@ -2,7 +2,15 @@ var today = new Date();
 var date = (today.getMonth()+1)+'/'+today.getDate()+'/'+today.getFullYear();
 
 $('#search-btn').on('click', function() {
+
     var cityName = $('#search-input').val();
+
+    var recentCity = $('<button>').text(cityName);
+    recentCity.addClass('list-group-item list-group-item-action');
+    $('.recent-list').prepend(recentCity);
+
+
+
     var queryURL = 'https://api.openweathermap.org/data/2.5/weather?q=' + cityName + '&appid=b358465e5aa355de6ef4b2a790684722';
     var forecastURL = 'https://api.openweathermap.org/data/2.5/forecast?q=' + cityName + '&appid=b358465e5aa355de6ef4b2a790684722';
 
@@ -61,7 +69,7 @@ $('#search-btn').on('click', function() {
         var forecastArray = [3, 11, 19, 27, 35];
 
         for (day of forecastArray) {
-            
+
             var fcDay = response.list[day].dt_txt;
             domDay = $('.forecast-'+day);
             domDay.text(fcDay);
