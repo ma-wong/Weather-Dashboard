@@ -3,6 +3,9 @@ var date = (today.getMonth()+1)+'/'+today.getDate()+'/'+today.getFullYear();
 
 var forecastArray = [3, 11, 19, 27, 35];
 
+// render last searched city
+renderLast();
+
 // on click event for search button
 $('#search-btn').on('click', function() {
     var cityName = $('#search-input').val();
@@ -37,13 +40,18 @@ function getWeatherInfo(cityName) {
         $('#city-display').text(cityDisplayed + ' (' + date + ')');
 
         var cityTemp = response.main.temp;
-        $('#temp').text('Temperature: ' + cityTemp);
+        var fTemp = convertTemp(cityTemp);
+        $('#temp').text('Temperature: ' + fTemp + '°F');
 
         var cityHumidity = response.main.humidity;
         $('#humidity').text('Humidity: ' + cityHumidity + '%');
 
         var windSpeed = response.wind.speed;
         $('#wind-speed').text('Wind Speed: ' + windSpeed + ' MPH');
+
+        var cityIconCode = response.weather[0].icon;
+        var cityIcon = 'http://openweathermap.org/img/w/' + cityIconCode + '.png';
+        $('#city-icon').attr('src', cityIcon);
 
         var lat = response.coord.lat;
         var lon = response.coord.lon;
@@ -62,9 +70,10 @@ function getWeatherInfo(cityName) {
             // saving current weather card info to local storage
             var currentCardInfo = {
                 city: cityDisplayed,
-                temp: cityTemp,
+                temp: fTemp,
                 humidity: cityHumidity,
                 wSpeed: windSpeed,
+                cIcon: cityIcon,
                 uv: uvIndex
             };
             localStorage.setItem('last current', JSON.stringify(currentCardInfo));
@@ -86,7 +95,8 @@ function getWeatherInfo(cityName) {
             $('#icon-'+day).attr('src', fcIcon);
 
             var fcTemp = res2.list[day].main.temp;
-            $('#fc-temp'+day).text('Temp: ' + fcTemp);
+            var fTemp = convertTemp(fcTemp);
+            $('#fc-temp'+day).text('Temp: ' + fTemp + '°F');
 
             var fcHumid = res2.list[day].main.humidity;
             $('#fc-humid'+day).text('Humidity: ' + fcHumid + '%');
@@ -94,7 +104,7 @@ function getWeatherInfo(cityName) {
             var fcCardInfo = {
                 day: fcDay,
                 icon: fcIcon,
-                temp: fcTemp,
+                temp: fTemp,
                 humidity: fcHumid
             };
             localStorage.setItem('last fc'+day, JSON.stringify(fcCardInfo));
@@ -105,22 +115,25 @@ function getWeatherInfo(cityName) {
 // function to render weather info about last searched city
 function renderLast() {
     var cwContent = JSON.parse(localStorage.getItem('last current'));
-    console.log(cwContent);
-    $('#city-display').text(cwContent.city + ' (' + date + ')');
-    $('#temp').text('Temperature: ' + cwContent.temp);
-    $('#humidity').text('Humidity: ' + cwContent.humidity + '%');
-    $('#wind-speed').text('Wind Speed: ' + cwContent.wSpeed + ' MPH');
-    $('#uv-index').text('UV Index: ' + cwContent.uv);
+    if (cwContent !== null) {
+        console.log(cwContent);
+        $('#city-display').text(cwContent.city + ' (' + date + ')');
+        $('#temp').text('Temperature: ' + cwContent.temp);
+        $('#humidity').text('Humidity: ' + cwContent.humidity + '%');
+        $('#wind-speed').text('Wind Speed: ' + cwContent.wSpeed + ' MPH');
+        $('#city-icon').attr('src', cwContent.cIcon);
+        $('#uv-index').text('UV Index: ' + cwContent.uv);
 
-    for (day of forecastArray) {
-        var fcContent = JSON.parse(localStorage.getItem('last fc'+day));
-        console.log(fcContent);
-        $('.forecast-'+day).text(fcContent.day);
-        $('#icon-'+day).attr('src', fcContent.icon);
-        $('#fc-temp'+day).text('Temp: ' + fcContent.temp);
-        $('#fc-humid'+day).text('Humidity: ' + fcContent.humidity + '%');
+        for (day of forecastArray) {
+            var fcContent = JSON.parse(localStorage.getItem('last fc'+day));
+            console.log(fcContent);
+            $('.forecast-'+day).text(fcContent.day);
+            $('#icon-'+day).attr('src', fcContent.icon);
+            $('#fc-temp'+day).text('Temp: ' + fcContent.temp);
+            $('#fc-humid'+day).text('Humidity: ' + fcContent.humidity + '%');
+        }
+        colorIndex(cwContent.uv);
     }
-    colorIndex(cwContent.uv);
 }
 
 // Function to color uv index
@@ -136,4 +149,7 @@ function colorIndex(uvIndex) {
     }
 }
 
-renderLast();
+// function to convert temp from kelvin to farenheit 
+function convertTemp(temp) {
+    return Math.round((temp- 273.15)*9/5+32);
+}
