@@ -8,7 +8,7 @@ $('#search-btn').on('click', function() {
     var cityName = $('#search-input').val();
 
     var recentCity = $('<button>').text(cityName);
-    recentCity.addClass('list-group-item list-group-item-action recent-search');
+    recentCity.addClass('list-group-item list-group-item-action');
     $('.recent-list').prepend(recentCity);
 
 
@@ -102,27 +102,43 @@ $('#search-btn').on('click', function() {
 
 });
 
-$('.recent-search').on('click', function(event) {
+$('.recent-list').on('click', function(event) {
     event.preventDefault();
-    var targetCity = $(this).text;
+    var targetCity = $(this).text();
     console.log(targetCity);
 
-});
-
-function renderRecentSearch() {
     var cwContent = JSON.parse(localStorage.getItem('current card:'+targetCity));
-    $('#city-display').text(cwContent.cityDisplayed + ' (' + date + ')');
-    $('#temp').text('Temperature: ' + cwContent.cityTemp);
-    $('#humidity').text('Humidity: ' + cwContent.cityHumidity + '%');
-    $('#wind-speed').text('Wind Speed: ' + cwContent.windSpeed + ' MPH');
-    $('#uv-index').text('UV Index: ' + cwContent.uvIndex);
+    console.log(cwContent);
+    $('#city-display').text(cwContent.city + ' (' + date + ')');
+    $('#temp').text('Temperature: ' + cwContent.temp);
+    $('#humidity').text('Humidity: ' + cwContent.humidity + '%');
+    $('#wind-speed').text('Wind Speed: ' + cwContent.wSpeed + ' MPH');
+    $('#uv-index').text('UV Index: ' + cwContent.uv);
 
     for (day of forecastArray) {
         var fcContent = JSON.parse(localStorage.getItem('FC'+targetCity+day));
-        $('.forecast-'+day).text(fcContent.fcDay);
-        $('#icon-'+day).attr('src', fcContent.fcIcon);
-        $('#fc-temp'+day).text('Temp: ' + fcContent.fcTemp);
-        $('#fc-humid'+day).text('Humidity: ' + fcContent.fcHumid + '%');
+        console.log(fcContent);
+        $('.forecast-'+day).text(fcContent.day);
+        $('#icon-'+day).attr('src', fcContent.icon);
+        $('#fc-temp'+day).text('Temp: ' + fcContent.temp);
+        $('#fc-humid'+day).text('Humidity: ' + fcContent.humidity + '%');
     }
+});
 
-}
+// function renderRecentSearch() {
+//     var cwContent = JSON.parse(localStorage.getItem('current card:'+targetCity));
+//     $('#city-display').text(cwContent.cityDisplayed + ' (' + date + ')');
+//     $('#temp').text('Temperature: ' + cwContent.cityTemp);
+//     $('#humidity').text('Humidity: ' + cwContent.cityHumidity + '%');
+//     $('#wind-speed').text('Wind Speed: ' + cwContent.windSpeed + ' MPH');
+//     $('#uv-index').text('UV Index: ' + cwContent.uvIndex);
+
+//     for (day of forecastArray) {
+//         var fcContent = JSON.parse(localStorage.getItem('FC'+targetCity+day));
+//         $('.forecast-'+day).text(fcContent.fcDay);
+//         $('#icon-'+day).attr('src', fcContent.fcIcon);
+//         $('#fc-temp'+day).text('Temp: ' + fcContent.fcTemp);
+//         $('#fc-humid'+day).text('Humidity: ' + fcContent.fcHumid + '%');
+//     }
+
+// }
