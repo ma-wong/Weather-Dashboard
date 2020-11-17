@@ -3,15 +3,27 @@ var date = (today.getMonth()+1)+'/'+today.getDate()+'/'+today.getFullYear();
 
 var forecastArray = [3, 11, 19, 27, 35];
 
+// on click event for search button
 $('#search-btn').on('click', function() {
-
     var cityName = $('#search-input').val();
 
     var recentCity = $('<button>').text(cityName);
-    recentCity.addClass('list-group-item list-group-item-action');
+    recentCity.addClass('list-group-item list-group-item-action recent-search');
     $('.recent-list').prepend(recentCity);
 
+    getWeatherInfo(cityName);
+});
 
+// On click event for recent search buttons
+$(document).on('click', '.recent-search', function(event) {
+    event.preventDefault();
+    var cityName = $(this).text();
+
+    getWeatherInfo(cityName);
+});
+
+// function that ajax call weather APIs
+function getWeatherInfo(cityName) {
     var queryURL = 'https://api.openweathermap.org/data/2.5/weather?q=' + cityName + '&appid=b358465e5aa355de6ef4b2a790684722';
     var forecastURL = 'https://api.openweathermap.org/data/2.5/forecast?q=' + cityName + '&appid=b358465e5aa355de6ef4b2a790684722';
 
@@ -45,15 +57,7 @@ $('#search-btn').on('click', function() {
             var uvIndex = res1.value;
             $('#uv-index').text('UV Index: ' + uvIndex);
             console.log(parseInt(uvIndex));
-            if (parseInt(uvIndex) <= 4) {
-                $('#uv-index').attr('style', 'background-color:lightgreen');
-            }
-            else if (4 < parseInt(uvIndex) && parseInt(uvIndex) < 8) {
-                $('#uv-index').attr('style', 'background-color:orange');
-            }
-            else if (parseInt(uvIndex) >= 8) {
-                $('#uv-index').attr('style', 'background-color:lightcoral');
-            }
+            colorIndex(uvIndex);
 
             // saving current weather card info to local storage
             var currentCardInfo = {
@@ -63,7 +67,7 @@ $('#search-btn').on('click', function() {
                 wSpeed: windSpeed,
                 uv: uvIndex
             };
-            localStorage.setItem('current card:'+cityName, JSON.stringify(currentCardInfo));
+            localStorage.setItem('last current', JSON.stringify(currentCardInfo));
         });
     });
 
@@ -74,7 +78,6 @@ $('#search-btn').on('click', function() {
         console.log(res2);
 
         for (day of forecastArray) {
-
             var fcDay = res2.list[day].dt_txt;
             $('.forecast-'+day).text(fcDay);
 
@@ -93,21 +96,15 @@ $('#search-btn').on('click', function() {
                 icon: fcIcon,
                 temp: fcTemp,
                 humidity: fcHumid
-            }
-
-            localStorage.setItem('FC'+cityName+day, JSON.stringify(fcCardInfo));
-
+            };
+            localStorage.setItem('last fc'+day, JSON.stringify(fcCardInfo));
         }
     });
+}
 
-});
-
-$('.recent-list').on('click', function(event) {
-    event.preventDefault();
-    var targetCity = $(this).text();
-    console.log(targetCity);
-
-    var cwContent = JSON.parse(localStorage.getItem('current card:'+targetCity));
+// function to render weather info about last searched city
+function renderLast() {
+    var cwContent = JSON.parse(localStorage.getItem('last current'));
     console.log(cwContent);
     $('#city-display').text(cwContent.city + ' (' + date + ')');
     $('#temp').text('Temperature: ' + cwContent.temp);
@@ -116,29 +113,27 @@ $('.recent-list').on('click', function(event) {
     $('#uv-index').text('UV Index: ' + cwContent.uv);
 
     for (day of forecastArray) {
-        var fcContent = JSON.parse(localStorage.getItem('FC'+targetCity+day));
+        var fcContent = JSON.parse(localStorage.getItem('last fc'+day));
         console.log(fcContent);
         $('.forecast-'+day).text(fcContent.day);
         $('#icon-'+day).attr('src', fcContent.icon);
         $('#fc-temp'+day).text('Temp: ' + fcContent.temp);
         $('#fc-humid'+day).text('Humidity: ' + fcContent.humidity + '%');
     }
-});
+    colorIndex(cwContent.uv);
+}
 
-// function renderRecentSearch() {
-//     var cwContent = JSON.parse(localStorage.getItem('current card:'+targetCity));
-//     $('#city-display').text(cwContent.cityDisplayed + ' (' + date + ')');
-//     $('#temp').text('Temperature: ' + cwContent.cityTemp);
-//     $('#humidity').text('Humidity: ' + cwContent.cityHumidity + '%');
-//     $('#wind-speed').text('Wind Speed: ' + cwContent.windSpeed + ' MPH');
-//     $('#uv-index').text('UV Index: ' + cwContent.uvIndex);
+// Function to color uv index
+function colorIndex(uvIndex) {
+    if (parseInt(uvIndex) <= 4) {
+        $('#uv-index').attr('style', 'background-color:lightgreen');
+    }
+    else if (4 < parseInt(uvIndex) && parseInt(uvIndex) < 8) {
+        $('#uv-index').attr('style', 'background-color:orange');
+    }
+    else if (parseInt(uvIndex) >= 8) {
+        $('#uv-index').attr('style', 'background-color:lightcoral');
+    }
+}
 
-//     for (day of forecastArray) {
-//         var fcContent = JSON.parse(localStorage.getItem('FC'+targetCity+day));
-//         $('.forecast-'+day).text(fcContent.fcDay);
-//         $('#icon-'+day).attr('src', fcContent.fcIcon);
-//         $('#fc-temp'+day).text('Temp: ' + fcContent.fcTemp);
-//         $('#fc-humid'+day).text('Humidity: ' + fcContent.fcHumid + '%');
-//     }
-
-// }
+renderLast();
