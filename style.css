@@ -15,14 +15,18 @@
 }
 
 .bg-primary {
-    height: 15rem;
-    width: 9.5rem;
+    width: 100%;
     margin: 1rem;
 }
 
 #forecast-text {
-    font-size: 20pt;
+    font-size: 25pt;
     margin-bottom: 0px;
+    padding: .5rem;
+    text-align: center;
+    border-style: solid;
+    background-color: rgba(255, 255, 255, 0.986);
+    border-width: thin;
 }
 
 .fc-date {
@@ -40,4 +44,14 @@
 
 .forecast-cards {
     margin: 0px;
+    margin-right: 1.5rem;
+    width: 100%;
+}
+
+body {
+    background-image: url(./Assets/clouds.jpg);
+}
+
+.card-body {
+    font-size: 14pt;
 }
